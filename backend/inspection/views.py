@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods
 
 from inspection.models import Inspection
-from inspection.cross_io import present_detail, present_list, store_swapped
+from inspection.display import present_detail, present_list
 from inspection.rules import judge
 
 
@@ -74,12 +74,11 @@ def create_view(request):
             error = "请填编号和三项数值"
         else:
             verdict, note = judge(measured, required, bearing)
-            stored_measured, stored_bearing = store_swapped(measured, bearing)
             row = Inspection.objects.create(
                 aid_code=code,
-                measured_cd=stored_measured,
+                measured_cd=measured,
                 required_cd=required,
-                bearing_error_deg=stored_bearing,
+                bearing_error_deg=bearing,
                 verdict=verdict,
                 note=note,
                 created_by=request.user.username,
